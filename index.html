@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RUTA DE GAS</title>
+<title>RUTA WATERTEC SPA</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; background:#f4f6f8; }
 header { background:#0a3d62; color:white; padding:15px; text-align:center; }
@@ -19,23 +19,12 @@ input::placeholder { color:#999; font-style:italic; }
 
 button { padding:6px 10px; margin:2px 0; border:none; cursor:pointer; border-radius:4px; }
 .guardar { background:#27ae60; color:white; width:100%; }
-.editar { background:#f39c12; color:white; }
-.borrar { background:#c0392b; color:white; }
 
 table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; word-wrap:break-word; }
 th, td { border:1px solid #ccc; padding:4px; text-align:center; }
 th { background:#dcdde1; }
 
-.resumen-container { display:flex; gap:15px; flex-wrap:wrap; margin-bottom:10px; }
-.resumen-box { background:white; border:1px solid #ccc; padding:10px; font-size:13px; flex:1 1 200px; box-shadow:0 2px 5px rgba(0,0,0,0.1); border-radius:6px; }
-.resumen-box table { width:100%; border-collapse:collapse; font-size:12px; }
-.resumen-box th, .resumen-box td { border:1px solid #ccc; padding:3px; text-align:center; }
-.resumen-box th { background:#34495e; color:white; font-size:12px; }
-.total-row { font-weight:bold; background:#2c3e50; color:white; }
-.control-caja p { margin:5px 0; font-weight:bold; font-size:14px; }
-.control-caja span { font-weight:normal; font-size:14px; }
-
-#registro div { max-width:400px; margin:auto; }
+#registro div { max-width:500px; margin:auto; display:grid; grid-template-columns: 1fr; gap:6px; }
 
 #filtroFecha, #busquedaDireccion { width:150px; display:inline-block; margin-right:6px; }
 #busquedaDireccion::placeholder { color:#999; font-style:italic; }
@@ -43,43 +32,48 @@ th { background:#dcdde1; }
 .imprimir-btn { background:#2980b9; color:white; padding:6px 10px; border-radius:5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; margin-bottom:10px; }
 .imprimir-btn:hover { background:#3498db; }
 
-.resumen-mensual-container { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px; }
-.resumen-box.mensual { background:white; border:1px solid #ccc; padding:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); border-radius:6px; }
-.resumen-box.mensual table { width:100%; border-collapse:collapse; font-size:12px; }
-.resumen-box.mensual th, .resumen-box.mensual td { border:1px solid #ccc; padding:4px; text-align:center; }
-.resumen-box.mensual th { background:#34495e; color:white; font-size:12px; }
+a { color:#2980b9; text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+.editar { background:#f39c12; color:white; padding:4px 6px; margin-right:2px; }
+.borrar { background:#c0392b; color:white; padding:4px 6px; }
+
+.dashboard { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.cuadro { background:white; border:1px solid #ccc; padding:10px; flex:1; min-width:150px; font-size:12px; }
+
+.cuadro table{ width:100%; border-collapse:collapse; }
+.cuadro th, .cuadro td { border:1px solid #ccc; padding:4px; text-align:center; font-size:12px; }
+.cuadro th { background:#dcdde1; }
 </style>
 </head>
 <body>
 
-<header><h1>RUTA DE GAS</h1></header>
+<header><h1>RUTA WATERTEC SPA</h1></header>
 <nav>
   <button onclick="mostrar('registro')">Registrar Venta</button>
   <button onclick="mostrar('ventas')">Registro de Ventas</button>
-  <button onclick="mostrar('resumenMensual')">Resumen Mensual</button>
 </nav>
 
 <!-- Registrar Venta -->
 <section id="registro">
 <h2>Registrar Venta</h2>
 <div>
-  <input type="text" id="direccion" placeholder="Dirección">
-  <select id="formato">
-    <option value="" disabled selected>Formato</option>
-    <option value="5 Kg">5 Kg</option>
-    <option value="11 Kg">11 Kg</option>
-    <option value="15 Kg">15 Kg</option>
-    <option value="45 Kg">45 Kg</option>
-  </select>
   <input type="date" id="fecha" placeholder="Fecha">
-  <input type="number" id="costoU" placeholder="Costo Unitario">
-  <input type="number" id="cant" placeholder="Cantidad">
-  <input type="number" id="precioV" placeholder="Precio de Venta">
-  <select id="pago">
-    <option value="" disabled selected>Pago</option>
+  <input type="text" id="direccion" placeholder="Dirección / Nombre">
+  <input type="text" id="telefono" placeholder="Teléfono">
+  <input type="number" id="costoU" placeholder="C. Unitario">
+  <input type="number" id="cant" placeholder="Ud.">
+  <select id="ep">
+    <option value="" selected>E/P (Opcional)</option>
     <option value="Efectivo">Efectivo</option>
     <option value="Transferencia">Transferencia</option>
   </select>
+  <select id="estado">
+    <option value="" disabled selected>Estado</option>
+    <option value="Pagado">Pagado</option>
+    <option value="Pendiente">Pendiente</option>
+  </select>
+  <input type="text" id="observaciones" placeholder="Observaciones">
   <button class="guardar" onclick="guardarVenta()">Guardar</button>
 </div>
 </section>
@@ -88,46 +82,35 @@ th { background:#dcdde1; }
 <section id="ventas" class="active">
 <h2>Registro de Ventas</h2>
 
-<div class="resumen-container" id="resumenCompartido">
-  <div class="resumen-box control-caja" id="controlCajaBox">
-    <h3>Control de Caja</h3>
-    <p>Efectivo: <span id="efectivo">$0</span></p>
-    <p>Transferencia: <span id="transferencia">$0</span></p>
-    <p>Total: <span id="totalCaja">$0</span></p>
-  </div>
-
-  <div class="resumen-box" id="resumenFormatoBox">
-    <h3>Resumen por Formato</h3>
-    <table>
-      <thead>
-        <tr><th>Formato</th><th>Cant.</th><th>Total Costo</th><th>Total Ventas</th><th>Total Ganancia</th></tr>
-      </thead>
-      <tbody id="resumenFormato"></tbody>
-      <tfoot>
-        <tr class="total-row">
-          <td>Total día</td>
-          <td id="totalCant">0</td>
-          <td id="totalCosto">$0</td>
-          <td id="totalVentas">$0</td>
-          <td id="totalGanancia">$0</td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+<div class="dashboard">
+  <!-- Pendientes -->
+  <div class="cuadro" id="cuadroPendientes"></div>
+  <!-- Pagados -->
+  <div class="cuadro" id="cuadroPagados"></div>
+  <!-- Control de Caja -->
+  <div class="cuadro" id="cuadroCaja"></div>
 </div>
 
 <input type="date" id="filtroFecha" onchange="mostrarVentas()">
-<input type="text" id="busquedaDireccion" oninput="mostrarVentas()" placeholder="Dirección...">
+<input type="text" id="busquedaDireccion" oninput="mostrarVentas()" placeholder="Dirección / Nombre...">
 <button onclick="verTodas()">Ver todas</button>
+<button onclick="filtrarPendientes()">Pendientes</button>
 <button class="imprimir-btn" onclick="imprimirRuta()">🖨️ Imprimir Ruta del Día</button>
 
 <div class="table-container">
 <table>
 <thead>
 <tr>
-<th>Dirección</th><th>Formato</th><th>Fecha</th><th>Costo Unitario</th><th>Cant.</th>
-<th>Precio de Venta</th><th>Costo Total</th><th>Venta Total</th><th>Ganancia</th>
-<th>% Ganancia</th><th>Efe/Transf.</th><th>Acciones</th>
+<th>Fecha</th>
+<th>Dirección / Nombre</th>
+<th>Teléfono</th>
+<th>C. Unitario</th>
+<th>Ud.</th>
+<th>Total</th>
+<th>E/P</th>
+<th>Estado</th>
+<th>Observaciones</th>
+<th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tablaVentas"></tbody>
@@ -135,130 +118,248 @@ th { background:#dcdde1; }
 </div>
 </section>
 
-<!-- Resumen Mensual -->
-<section id="resumenMensual">
-<h2>Resumen Mensual</h2>
-<div class="resumen-mensual-container">
-  <div class="resumen-box mensual" id="resumen5kg"><h3>5 Kg</h3><table><thead><tr><th>Mes</th><th>Cantidad Vendida</th><th>Costo Total</th><th>Venta Total</th><th>Ganancia Total</th></tr></thead><tbody></tbody></table></div>
-  <div class="resumen-box mensual" id="resumen11kg"><h3>11 Kg</h3><table><thead><tr><th>Mes</th><th>Cantidad Vendida</th><th>Costo Total</th><th>Venta Total</th><th>Ganancia Total</th></tr></thead><tbody></tbody></table></div>
-  <div class="resumen-box mensual" id="resumen15kg"><h3>15 Kg</h3><table><thead><tr><th>Mes</th><th>Cantidad Vendida</th><th>Costo Total</th><th>Venta Total</th><th>Ganancia Total</th></tr></thead><tbody></tbody></table></div>
-  <div class="resumen-box mensual" id="resumen45kg"><h3>45 Kg</h3><table><thead><tr><th>Mes</th><th>Cantidad Vendida</th><th>Costo Total</th><th>Venta Total</th><th>Ganancia Total</th></tr></thead><tbody></tbody></table></div>
-</div>
-</section>
-
 <script>
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let editIndex = -1;
 
-function mostrar(id){ document.querySelectorAll("section").forEach(s=>s.style.display="none"); document.getElementById(id).style.display="block"; }
+function mostrar(id){
+    document.querySelectorAll("section").forEach(s=>s.style.display="none"); 
+    document.getElementById(id).style.display="block"; 
+}
 
-function formatearNumero(n){ return n.toLocaleString('es-CL',{minimumFractionDigits:0, maximumFractionDigits:0}); }
+function formatearNumero(n){ return n.toLocaleString('es-CL',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 
 function guardarVenta(){
-const direccion=document.getElementById("direccion").value;
-const formato=document.getElementById("formato").value;
-const fecha=document.getElementById("fecha").value;
-const costoU=Number(document.getElementById("costoU").value);
-const cant=Number(document.getElementById("cant").value);
-const precioV=Number(document.getElementById("precioV").value);
-const pago=document.getElementById("pago").value;
-if(!direccion||!fecha||!costoU||!cant||!precioV||!formato||!pago){alert("Completa todos los campos"); return;}
-const costoT=costoU*cant;
-const ventaT=precioV*cant;
-const ganancia=ventaT-costoT;
-const porcentaje=((ganancia/ventaT)*100).toFixed(1);
-const venta={direccion,formato,fecha,costoU,cant,precioV,costoT,ventaT,ganancia,porcentaje,pago};
-if(editIndex>=0){ventas[editIndex]=venta;editIndex=-1;} else {ventas.push(venta);}
-localStorage.setItem("ventas",JSON.stringify(ventas));
-["direccion","fecha","costoU","cant","precioV"].forEach(id=>document.getElementById(id).value="");
-document.getElementById("formato").value="";
-document.getElementById("pago").value="";
-mostrarVentas();
-actualizarResumenMensual();
+    const fecha = document.getElementById("fecha").value;
+    const direccion = document.getElementById("direccion").value;
+    const telefono = document.getElementById("telefono").value;
+    const costoU = Number(document.getElementById("costoU").value);
+    const cant = Number(document.getElementById("cant").value);
+    const ep = document.getElementById("ep").value; 
+    const estado = document.getElementById("estado").value;
+    const observaciones = document.getElementById("observaciones").value;
+
+    if(!fecha || !direccion || !telefono || !costoU || !cant || !estado){
+        alert("Completa todos los campos (E/P es opcional)");
+        return;
+    }
+
+    const total = costoU * cant;
+    const venta = {fecha,direccion,telefono,costoU,cant,total,ep,estado,observaciones};
+
+    if(editIndex>=0){ 
+        ventas[editIndex]=venta; 
+        editIndex=-1; 
+    } else { 
+        ventas.push(venta); 
+    }
+    localStorage.setItem("ventas",JSON.stringify(ventas));
+
+    ["fecha","direccion","telefono","costoU","cant","observaciones"].forEach(id=>document.getElementById(id).value="");
+    document.getElementById("ep").value="";
+    document.getElementById("estado").value="";
+
+    mostrarVentas();
+    mostrar('ventas');
 }
 
-function editarVenta(i){ const v=ventas[i]; document.getElementById("direccion").value=v.direccion; document.getElementById("formato").value=v.formato; document.getElementById("fecha").value=v.fecha; document.getElementById("costoU").value=v.costoU; document.getElementById("cant").value=v.cant; document.getElementById("precioV").value=v.precioV; document.getElementById("pago").value=v.pago; editIndex=i; mostrar('registro'); }
+function editarVenta(i){
+    const v = ventas[i];
+    document.getElementById("fecha").value = v.fecha;
+    document.getElementById("direccion").value = v.direccion;
+    document.getElementById("telefono").value = v.telefono;
+    document.getElementById("costoU").value = v.costoU;
+    document.getElementById("cant").value = v.cant;
+    document.getElementById("ep").value = v.ep;
+    document.getElementById("estado").value = v.estado;
+    document.getElementById("observaciones").value = v.observaciones;
+    editIndex = i;
+    mostrar('registro');
+}
 
-function borrarVenta(i){if(confirm("¿Deseas eliminar esta venta?")){ventas.splice(i,1); localStorage.setItem("ventas",JSON.stringify(ventas)); mostrarVentas(); actualizarResumenMensual();}}
+function borrarVenta(i){
+    if(confirm("¿Deseas eliminar esta venta?")){
+        ventas.splice(i,1);
+        localStorage.setItem("ventas",JSON.stringify(ventas));
+        mostrarVentas();
+    }
+}
 
 function mostrarVentas(){
-const filtroFecha=document.getElementById("filtroFecha").value;
-const filtroDireccion=document.getElementById("busquedaDireccion").value.toLowerCase();
-const tabla=document.getElementById("tablaVentas");
-tabla.innerHTML="";
-const ventasFiltradas=ventas.filter(v=>(!filtroFecha||v.fecha===filtroFecha)&&(!filtroDireccion||v.direccion.toLowerCase().includes(filtroDireccion)));
-ventasFiltradas.forEach((v,i)=>{tabla.innerHTML+=`<tr>
-<td>${v.direccion}</td><td>${v.formato}</td><td>${v.fecha}</td><td>$${formatearNumero(v.costoU)}</td><td>${v.cant}</td>
-<td>$${formatearNumero(v.precioV)}</td><td>$${formatearNumero(v.costoT)}</td><td>$${formatearNumero(v.ventaT)}</td><td>$${formatearNumero(v.ganancia)}</td>
-<td>${v.porcentaje}%</td><td>${v.pago}</td>
-<td><button class="editar" onclick="editarVenta(${i})">Editar</button> <button class="borrar" onclick="borrarVenta(${i})">Borrar</button></td>
-</tr>`;});
-actualizarResumen(ventasFiltradas); actualizarCaja(ventasFiltradas); actualizarResumenMensual();
+    const filtroFecha = document.getElementById("filtroFecha").value;
+    const filtroDireccion = document.getElementById("busquedaDireccion").value.toLowerCase();
+    const tabla = document.getElementById("tablaVentas");
+    tabla.innerHTML="";
+
+    let ventasFiltradas = ventas.filter(v =>
+        (!filtroFecha || v.fecha === filtroFecha) &&
+        (!filtroDireccion || v.direccion.toLowerCase().includes(filtroDireccion))
+    );
+
+    // Separar pendientes arriba
+    const pendientes = ventasFiltradas.filter(v => v.estado === "Pendiente");
+    const otros = ventasFiltradas.filter(v => v.estado !== "Pendiente");
+    ventasFiltradas = [...pendientes, ...otros];
+
+    ventasFiltradas.forEach((v,i)=>{
+        const waMessage = `Hola,\n\nLe confirmamos que el día ${v.fecha} se entregó ${v.cant} recarga(s). Queda pendiente el pago correspondiente.\n\nMonto a pagar: $${formatearNumero(v.total)}\n\nAgradecemos su confirmación.\n\nMuchas gracias.`;
+        tabla.innerHTML += `<tr>
+            <td>${v.fecha}</td>
+            <td>${v.direccion}</td>
+            <td><a href="https://wa.me/569${v.telefono}?text=${encodeURIComponent(waMessage)}" target="_blank">${v.telefono}</a></td>
+            <td>$${formatearNumero(v.costoU)}</td>
+            <td>${v.cant}</td>
+            <td>$${formatearNumero(v.total)}</td>
+            <td>${v.ep}</td>
+            <td>${v.estado}</td>
+            <td>${v.observaciones}</td>
+            <td>
+                <button class="editar" onclick="editarVenta(${i})">Editar</button>
+                <button class="borrar" onclick="borrarVenta(${i})">Borrar</button>
+            </td>
+        </tr>`;
+    });
+
+    // Actualizar cuadros de resumen
+    actualizarResumen(filtroFecha);
 }
 
-function actualizarResumen(ventasFiltradas){
-const resumen={}; const formatos=["5 Kg","11 Kg","15 Kg","45 Kg"];
-formatos.forEach(f=>resumen[f]={cant:0,costo:0,ventas:0,ganancia:0});
-ventasFiltradas.forEach(v=>{const r=resumen[v.formato]; if(r){r.cant+=v.cant; r.costo+=v.costoT; r.ventas+=v.ventaT; r.ganancia+=v.ganancia;}});
-const tbody=document.getElementById("resumenFormato"); tbody.innerHTML="";
-let totalCant=0,totalCosto=0,totalVentas=0,totalGanancia=0;
-formatos.forEach(f=>{const r=resumen[f]; tbody.innerHTML+=`<tr><td>${f}</td><td>${r.cant}</td><td>$${formatearNumero(r.costo)}</td><td>$${formatearNumero(r.ventas)}</td><td>$${formatearNumero(r.ganancia)}</td></tr>`; totalCant+=r.cant; totalCosto+=r.costo; totalVentas+=r.ventas; totalGanancia+=r.ganancia;});
-document.getElementById("totalCant").textContent=totalCant;
-document.getElementById("totalCosto").textContent=`$${formatearNumero(totalCosto)}`;
-document.getElementById("totalVentas").textContent=`$${formatearNumero(totalVentas)}`;
-document.getElementById("totalGanancia").textContent=`$${formatearNumero(totalGanancia)}`;
+function verTodas(){ 
+    document.getElementById("filtroFecha").value=""; 
+    document.getElementById("busquedaDireccion").value=""; 
+    mostrarVentas(); 
 }
 
-function actualizarCaja(ventasFiltradas){
-let efectivo=0,transferencia=0;
-ventasFiltradas.forEach(v=>{if(v.pago==="Efectivo") efectivo+=v.ventaT; else if(v.pago==="Transferencia") transferencia+=v.ventaT;});
-const total=efectivo+transferencia;
-document.getElementById("efectivo").textContent=`$${formatearNumero(efectivo)}`;
-document.getElementById("transferencia").textContent=`$${formatearNumero(transferencia)}`;
-document.getElementById("totalCaja").textContent=`$${formatearNumero(total)}`;
+function filtrarPendientes(){
+    const tabla = document.getElementById("tablaVentas");
+    tabla.innerHTML="";
+    const pendientes = ventas.filter(v => v.estado === "Pendiente");
+    pendientes.forEach((v,i)=>{
+        const waMessage = `Hola,\n\nLe confirmamos que el día ${v.fecha} se entregó ${v.cant} recarga(s). Queda pendiente el pago correspondiente.\n\nMonto a pagar: $${formatearNumero(v.total)}\n\nAgradecemos su confirmación.\n\nMuchas gracias.`;
+        tabla.innerHTML += `<tr>
+            <td>${v.fecha}</td>
+            <td>${v.direccion}</td>
+            <td><a href="https://wa.me/569${v.telefono}?text=${encodeURIComponent(waMessage)}" target="_blank">${v.telefono}</a></td>
+            <td>$${formatearNumero(v.costoU)}</td>
+            <td>${v.cant}</td>
+            <td>$${formatearNumero(v.total)}</td>
+            <td>${v.ep}</td>
+            <td>${v.estado}</td>
+            <td>${v.observaciones}</td>
+            <td>
+                <button class="editar" onclick="editarVenta(${i})">Editar</button>
+                <button class="borrar" onclick="borrarVenta(${i})">Borrar</button>
+            </td>
+        </tr>`;
+    });
+    actualizarResumen(document.getElementById("filtroFecha").value);
 }
 
-function verTodas(){ document.getElementById("filtroFecha").value=""; document.getElementById("busquedaDireccion").value=""; mostrarVentas(); }
+// Función para actualizar los cuadros de Pendientes, Pagados y Control de Caja
+function actualizarResumen(filtroFecha){
+    let ventasFiltradas = ventas.filter(v => !filtroFecha || v.fecha === filtroFecha);
+
+    // Pendientes
+    let totalPendiente = 0;
+    let pendientesHtml = '<strong>Pendientes</strong><table><tr><th>Mes</th><th>Pendiente</th></tr>';
+    const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    meses.forEach((mes,idx)=>{
+        const totalMes = ventasFiltradas.filter(v=> new Date(v.fecha).getMonth()===idx && v.estado==="Pendiente")
+                        .reduce((sum,v)=>sum+v.total,0);
+        pendientesHtml += `<tr><td>${mes}</td><td>$${formatearNumero(totalMes)}</td></tr>`;
+        totalPendiente += totalMes;
+    });
+    pendientesHtml += `<tr><th>Total</th><th>$${formatearNumero(totalPendiente)}</th></tr></table>`;
+    document.getElementById("cuadroPendientes").innerHTML = pendientesHtml;
+
+    // Pagados
+    let totalPagado = 0;
+    let pagadosHtml = '<strong>Pagado</strong><table><tr><th>Mes</th><th>Pagado</th></tr>';
+    meses.forEach((mes,idx)=>{
+        const totalMes = ventasFiltradas.filter(v=> new Date(v.fecha).getMonth()===idx && v.estado==="Pagado")
+                        .reduce((sum,v)=>sum+v.total,0);
+        pagadosHtml += `<tr><td>${mes}</td><td>$${formatearNumero(totalMes)}</td></tr>`;
+        totalPagado += totalMes;
+    });
+    pagadosHtml += `<tr><th>Total</th><th>$${formatearNumero(totalPagado)}</th></tr></table>`;
+    document.getElementById("cuadroPagados").innerHTML = pagadosHtml;
+
+    // Control de Caja
+    let efectivo = ventasFiltradas.filter(v=>v.ep==="Efectivo").reduce((sum,v)=>sum+v.total,0);
+    let transferencia = ventasFiltradas.filter(v=>v.ep==="Transferencia").reduce((sum,v)=>sum+v.total,0);
+    let totalCaja = efectivo + transferencia;
+    document.getElementById("cuadroCaja").innerHTML = `<strong>Control de Caja</strong><table>
+    <tr><td>Efectivo</td><td>$${formatearNumero(efectivo)}</td></tr>
+    <tr><td>Transferencia</td><td>$${formatearNumero(transferencia)}</td></tr>
+    <tr><th>Total</th><th>$${formatearNumero(totalCaja)}</th></tr>
+    </table>`;
+}
 
 function imprimirRuta(){
-const hoy=new Date().toISOString().slice(0,10);
-const ventasHoy=ventas.filter(v=>v.fecha===hoy);
-let totalEfectivo=0,totalTrans=0,totalVenta=0;
-ventasHoy.forEach(v=>{totalVenta+=v.ventaT; if(v.pago==="Efectivo") totalEfectivo+=v.ventaT; else totalTrans+=v.ventaT;});
-let html=`<html><head><title>RUTA GAS</title><style>
-body{font-family:Arial;margin:20px;} h2{text-align:center;font-size:28px;color:#0a3d62;margin-bottom:20px;}
-table{width:100%;border-collapse:collapse;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-th,td{border:1px solid #ccc;padding:8px;text-align:center;font-size:14px;}
-th{background:#34495e;color:white;} tbody tr:nth-child(even){background:#f4f6f8;}
-tfoot td{font-weight:bold;background:#ddd;}
-</style></head><body><h2>RUTA GAS</h2><table><thead>
-<tr><th>Dirección</th><th>Formato</th><th>Fecha</th><th>Cant.</th><th>Venta Total</th><th>Efe/Transf.</th></tr></thead><tbody>`;
-ventasHoy.forEach(v=>{html+=`<tr><td>${v.direccion}</td><td>${v.formato}</td><td>${v.fecha}</td><td>${v.cant}</td><td>$${formatearNumero(v.ventaT)}</td><td>${v.pago}</td></tr>`;});
-html+=`</tbody><tfoot><tr><td colspan="4">Total</td><td>$${formatearNumero(totalVenta)}</td><td>Efectivo:$${formatearNumero(totalEfectivo)} | Transf:$${formatearNumero(totalTrans)}</td></tr></tfoot></table></body></html>`;
-const ventana=window.open('', '_blank'); ventana.document.write(html); ventana.document.close(); ventana.print();
-}
+    const hoy = new Date().toISOString().slice(0,10);
+    const ventasHoy = ventas.filter(v => v.fecha === hoy);
 
-function actualizarResumenMensual(){
-const meses=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const formatos=["5 Kg","11 Kg","15 Kg","45 Kg"];
-formatos.forEach(formato=>{
-const tbody=document.querySelector(`#resumen${formato.replace(' ','').toLowerCase()} tbody`);
-tbody.innerHTML="";
-meses.forEach((mes,i)=>{
-const mesVentas=ventas.filter(v=>v.formato===formato && new Date(v.fecha).getMonth()===i);
-let cantidad=0,costoTotal=0,ventaTotal=0,gananciaTotal=0;
-mesVentas.forEach(v=>{cantidad+=v.cant;costoTotal+=v.costoT;ventaTotal+=v.ventaT;gananciaTotal+=v.ganancia;});
-tbody.innerHTML+=`<tr><td>${mes}</td><td>${cantidad}</td><td>$${formatearNumero(costoTotal)}</td><td>$${formatearNumero(ventaTotal)}</td><td>$${formatearNumero(gananciaTotal)}</td></tr>`;
-});
-});
+    let html = `<html>
+    <head>
+    <title>RUTA WATERTEC SPA</title>
+    <style>
+        body{font-family:Arial;margin:20px;} 
+        h2, h3{text-align:center;margin:5px 0;}
+        table{width:100%;border-collapse:collapse; margin-top:20px;}
+        th,td{border:1px solid #ccc;padding:8px;text-align:center;font-size:14px;}
+        th{background:#34495e;color:white;} 
+        td{word-wrap:break-word;}
+        td.observaciones{min-width:150px;}
+        td.ep{min-width:100px;}
+        tbody tr:nth-child(even){background:#f4f6f8;}
+    </style>
+    </head>
+    <body>
+        <h2>RUTA WATERTEC SPA</h2>
+        <h3>DISTRIBUIDORA E IMPORTADORA</h3>
+        <h3>WATERTEC SPA RUT: 77.198.537-8</h3>
+        <h3>CHOFER: ____________________</h3>
+
+        <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>C. Unitario</th>
+                <th>Ud.</th>
+                <th>Total</th>
+                <th>E/P</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    ventasHoy.forEach(v=>{
+        html += `<tr>
+            <td>${v.fecha}</td>
+            <td>${v.direccion}</td>
+            <td>${v.telefono}</td>
+            <td>$${formatearNumero(v.costoU)}</td>
+            <td>${v.cant}</td>
+            <td>$${formatearNumero(v.total)}</td>
+            <td>${v.ep}</td>
+            <td>${v.observaciones || ''}</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table></body></html>`;
+
+    const ventana = window.open('', '_blank'); 
+    ventana.document.write(html); 
+    ventana.document.close(); 
+    ventana.print();
 }
 
 mostrarVentas();
-actualizarResumenMensual();
 </script>
 
 </body>
 </html>
-
 
 
